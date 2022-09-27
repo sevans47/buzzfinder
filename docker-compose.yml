@@ -1,0 +1,26 @@
+# see video 7 of 8 from about 20 min in
+# under "services", identify folders for which you have put docker file inside
+# container_name = name you pass for server?
+# expose = expose a port (opening a port inside the docker network, not to the outside world)
+### choose port that uwsgi is listening on (see makefile)
+# ports = maps port from host machine (80) to container (1234 - specified in that folder)
+### つまり every time we have an incoming request on port 80 of the host machine,
+### map that onto port 1234 of the nginx container (which is set up in config file)
+
+version: "3.7"
+
+services:
+
+  flask:
+    build: ./flask
+    container_name: flask
+    restart: always
+    expose:
+      - 900
+
+    nginx:
+      build: ./nginx
+      contianer_name: nginx
+      restart: always
+      ports:
+        - "80:1234"

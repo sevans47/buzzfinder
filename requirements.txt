@@ -1,0 +1,18 @@
+# audio libraries
+librosa
+audiomentations
+pydub
+soundfile
+
+# ds libraries
+numpy
+matplotlib
+tensorflow
+
+# deployment libraries
+mlflow
+flask
+uwsgi
+
+# general libraries
+pytest

@@ -1,0 +1,7 @@
+
+                data used: /Users/Stephen/code/sevans47/buzzfinder/data/comprehensive_mfccs_no_augment.json
+                total data size: 421
+                training data size: 168, 39.9% of data
+                validation data size: 128, 30.4% of data
+                test data size: 125, 29.69% of data
+            
