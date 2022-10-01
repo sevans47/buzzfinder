@@ -11,8 +11,10 @@ tensorflow
 
 # deployment libraries
 mlflow
-flask
-uwsgi
+fastapi
+uvicorn
+bentoml
 
 # general libraries
 pytest
+requests

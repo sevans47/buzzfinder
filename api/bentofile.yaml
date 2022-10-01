@@ -1,0 +1,11 @@
+service: "service:buzzfinder_service"
+labels:
+  owner: Stephen Evans
+  stage: dev
+include:
+  - "*.py"
+python:
+  packages:
+    - tensorflow
+    - numpy
+    - librosa

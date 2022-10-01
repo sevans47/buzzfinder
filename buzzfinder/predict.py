@@ -21,8 +21,9 @@ class _Buzz_Finder_Service:
         # extract MFCCs
         MFCCs = self.preprocess(file_path)  # (# segments, # coefficients)
 
-        # convert 2d MFCCs array into 4d array -> (# samples, # segments, # coefficients, # channels)
-        MFCCs = MFCCs[np.newaxis, ..., np.newaxis]
+        ### do this step in self.preprocess()
+        # # convert 2d MFCCs array into 4d array -> (# samples, # segments, # coefficients, # channels)
+        # MFCCs = MFCCs[np.newaxis, ..., np.newaxis]
 
         # make prediction
         predictions = self.model.predict(MFCCs) # [ [0.2, 0.6] ] - 2d array with predictions for buzzy / clean
@@ -51,7 +52,19 @@ class _Buzz_Finder_Service:
         # concatenate MFCCs, delta MFCCs, and delta delta MFCCs
         data = np.concatenate([MFCCs, delta_mfccs, delta2_mfccs])  # comprehensive MFCCs
 
-        return data.T
+        ### can end here if adding axis in self.predict instead of here
+        # return data.T
+
+        # transpose data
+        data = data.T
+
+        # convert 2d MFCCs array into 4d array -> (# samples, # segments, # coefficients, # channels)
+        data = data[np.newaxis, ..., np.newaxis]
+
+        return data
+
+
+
 
 
 def Buzz_Finder_Service():

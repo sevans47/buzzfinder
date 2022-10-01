@@ -18,7 +18,8 @@ all: install clean
 test:
 	@pytest -v tests
 
-#----------gcloud stuff----------
+
+#----------gcloud bucket stuff----------
 
 PROJECT_ID=audio-projects-363306
 BUCKET_NAME=buzzfinder_audio_data
@@ -33,6 +34,7 @@ upload_audio_data:
 download_audio_data:
 	@gsutil -m cp -rn gs://${BUCKET_NAME}/audio .
 
+
 #----------mlflow stuff----------
 
 mlflow_launch_tracking_server:
@@ -44,12 +46,47 @@ mlflow_create_experiment:
 	@clear
 	@mlflow experiments create -n, --experiment-name ${EXP_NAME}
 
+
+#----------api stuff----------
+
+# after you create service.py and bentofile.yaml
+bentoml_build:
+	@cd api && bentoml build
+
+bentoml_serve:
+	@cd api && bentoml serve buzzfinder_classifier:latest --production
+
+bentoctl_init:
+	@cd api && bentoctl init
+
+bentoctl_build_and_push_docker_image:
+	@cd api && bentoctl build -b buzzfinder_classifier: latest -f deployment_config.yaml
+
+terraform_init:
+	@cd api && terraform init
+
+terraform_deploy:
+	@cd api && terraform apply -var-file=bentoctl.tfvars -auto-approve
+
+
+#----------gcloud registry stuff----------
+
+
 #----------deployment stuff----------
 
-uwsgi_run_server:
-	@uwsgi --http 127.0.0.1:5050 --wsgi-file buzzfinder/server.py --callable app --processes 1 --threads 1
+# uwsgi_run_server:
+# 	@uwsgi --http 127.0.0.1:5050 --wsgi-file buzzfinder/server.py --callable app --processes 1 --threads 1
 
 
-docker_compose:
-	@docker-compose build
-	@docker-compose up
+# docker_compose:
+# 	@docker-compose build
+# 	@docker-compose up
+
+# DOCKER_IMAGE_NAME=buzzfinder_classifier
+# GCR_MULTI_REGION=us.gcr.io
+
+# docker_push:
+# 	@docker push ${GCR_MULTI_REGION}/${PROJECT_ID}/${DOCKER_IMAGE_NAME}
+
+# docker_run:
+# 	@docker run -e PORT=8000 -p 8080:8000 ${GCR_MULTI_REGION}/${PROJECT_ID}/${DOCKER_IMAGE_NAME}
