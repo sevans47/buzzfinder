@@ -47,7 +47,16 @@ mlflow_create_experiment:
 	@mlflow experiments create -n, --experiment-name ${EXP_NAME}
 
 
-#----------api stuff----------
+#----------deployment----------
+
+# put trained model in "data" folder before running the following bentoml_save_model
+MODEL_NAME ?= $(shell bash -c 'read -p "file name for model: "  input; echo $$input')
+
+bentoml_save_model:
+	@python buzzfinder/savemodeltobento.py ${MODEL_NAME}
+
+bentoml_view_models:
+	@bentoml models list
 
 # after you create service.py and bentofile.yaml
 bentoml_build:
@@ -69,13 +78,7 @@ terraform_deploy:
 	@cd api && terraform apply -var-file=bentoctl.tfvars -auto-approve
 
 
-#----------gcloud registry stuff----------
-
-
 #----------deployment stuff----------
-
-# uwsgi_run_server:
-# 	@uwsgi --http 127.0.0.1:5050 --wsgi-file buzzfinder/server.py --callable app --processes 1 --threads 1
 
 
 # docker_compose:
