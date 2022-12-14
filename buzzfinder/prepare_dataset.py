@@ -4,11 +4,13 @@ import os
 import numpy as np
 import json
 import random
+import time
 import soundfile as sf
-from audiomentations import Compose, AddGaussianNoise, TimeStretch, PitchShift, Gain
+from audiomentations import Compose, AddGaussianNoise, HighPassFilter, LowPassFilter, Gain
 from buzzfinder.const import ROOT_DIR, SAMPLES_TO_CONSIDER, N_MFCC, HOP_LENGTH, N_FFT, N_MELS
 
-FILE_NAME = "comprehensive_mfccs_no_augment"
+timestr = time.strftime("%Y%m%d-%H%M")
+FILE_NAME = f"comprehensive_mfccs_all_5to1_{timestr}"
 
 DATASET_PATH = os.path.join(ROOT_DIR, "audio/buzz_finder_audio/")
 JSON_PATH = os.path.join(ROOT_DIR, "data", f"{FILE_NAME}.json")
@@ -35,23 +37,29 @@ def split_train_test_val(train_test_val_split, dataset_path):
     # get list of all files
     buzzy_files = glob.glob(os.path.join(dataset_path, "buzzy", "*"))
     clean_files = glob.glob(os.path.join(dataset_path, "clean", "*"))
+    muted_files = glob.glob(os.path.join(dataset_path, "muted", "*"))
 
     # split data for creating augmented data later (any previously augmented data has been deleted)
     buzzy_train = random.sample(buzzy_files, int(len(buzzy_files) * train_pct))
     clean_train = random.sample(clean_files, int(len(clean_files) * train_pct))
+    muted_train = random.sample(muted_files, int(len(muted_files) * train_pct))
+
 
     buzzy_test_val = list(set(buzzy_files) - set(buzzy_train))
     clean_test_val = list(set(clean_files) - set(clean_train))
+    muted_test_val = list(set(muted_files) - set(muted_train))
 
     buzzy_test = random.sample(buzzy_test_val, int(len(buzzy_files) * test_pct))
     clean_test = random.sample(clean_test_val, int(len(clean_files) * test_pct))
+    muted_test = random.sample(muted_test_val, int(len(muted_files) * test_pct))
 
     buzzy_val = list(set(buzzy_test_val) - set(buzzy_test))
     clean_val = list(set(clean_test_val) - set(clean_test))
+    muted_val = list(set(muted_test_val) - set(muted_test))
 
-    train_files = buzzy_train + clean_train
-    test_files = buzzy_test + clean_test
-    val_files = buzzy_val + clean_val
+    train_files = buzzy_train + clean_train + muted_train
+    test_files = buzzy_test + clean_test + muted_test
+    val_files = buzzy_val + clean_val + muted_val
 
     return train_files, test_files, val_files
 
@@ -72,6 +80,7 @@ def split_test_val(train_test_val_split, dataset_path):
     # get list of all files
     buzzy_files = glob.glob(os.path.join(dataset_path, "buzzy", "*"))
     clean_files = glob.glob(os.path.join(dataset_path, "clean", "*"))
+    muted_files = glob.glob(os.path.join(dataset_path, "muted", "*"))
     all_files = buzzy_files + clean_files
 
     # create list of training data filepaths "train_files"
@@ -111,17 +120,17 @@ def augment_training_data(training_data_files, n_augmentations_per_file):
     # augment1 - for audio that's 3 or more seconds - time stretch can be faster (ie max_rate > 1)
     augment1 = Compose([
         AddGaussianNoise(min_amplitude=0.001, max_amplitude=0.005, p=0.8),
-        TimeStretch(min_rate=0.9, max_rate=1.15, p=1.0),
-        PitchShift(min_semitones=-4, max_semitones=4, p=0.8),
         Gain(min_gain_in_db=-12, max_gain_in_db=12, p=0.8),
+        HighPassFilter(min_cutoff_freq=400, max_cutoff_freq=800, p=0.8),
+        LowPassFilter(min_cutoff_freq=6000, max_cutoff_freq=8000, p=0.8)
     ])
 
     # augment2 - for audio that's 2 seconds
     augment2 = Compose([
         AddGaussianNoise(min_amplitude=0.001, max_amplitude=0.005, p=0.8),
-        TimeStretch(min_rate=0.9, max_rate=1.0, p=0.8),
-        PitchShift(min_semitones=-4, max_semitones=4, p=0.8),
         Gain(min_gain_in_db=-12, max_gain_in_db=12, p=0.8),
+        HighPassFilter(min_cutoff_freq=400, max_cutoff_freq=800, p=0.8),
+        LowPassFilter(min_cutoff_freq=6000, max_cutoff_freq=8000, p=0.8)
     ])
 
     # loop through files and augment data
@@ -190,7 +199,7 @@ def main(dataset_path=DATASET_PATH, json_path=JSON_PATH, datatype='comprehensive
 
     # data dictionary
     data_dict = {
-        "mappings": ["buzzy", "clean"],
+        "mappings": ["buzzy", "clean", "muted"],
         "train_labels": [],
         "train_data": [],
         "val_labels": [],
@@ -205,7 +214,8 @@ def main(dataset_path=DATASET_PATH, json_path=JSON_PATH, datatype='comprehensive
     # create list of all buzzy and clean filepaths
     buzzy_files = glob.glob(os.path.join(dataset_path, "buzzy", "*"))
     clean_files = glob.glob(os.path.join(dataset_path, "clean", "*"))
-    all_files = buzzy_files + clean_files
+    muted_files = glob.glob(os.path.join(dataset_path, "muted", "*"))
+    all_files = buzzy_files + clean_files + muted_files
 
     if create_augmented_data:
 
@@ -256,7 +266,16 @@ def main(dataset_path=DATASET_PATH, json_path=JSON_PATH, datatype='comprehensive
 
                 # get label
                 # label = 1 if "clean" in file.split("/")[-1] else 0
-                label = 1 if "clean" in os.path.basename(file) else 0
+                # label = 1 if "clean" in os.path.basename(file) else 0
+                if "buzzy" in os.path.basename(file):
+                    label = 0
+                elif "clean" in os.path.basename(file):
+                    label = 1
+                elif "muted" in os.path.basename(file):
+                    label = 2
+                else:
+                    continue
+
 
                 # extract datatype
                 if datatype == 'mfccs':
@@ -309,4 +328,11 @@ def main(dataset_path=DATASET_PATH, json_path=JSON_PATH, datatype='comprehensive
     print("Complete")
 
 if __name__ == "__main__":
-    main()
+    # main(create_augmented_data=True, n_augmentations_per_file=5)
+
+    # delete augmented data
+    buzzy_files = glob.glob(os.path.join(DATASET_PATH, "buzzy", "*"))
+    clean_files = glob.glob(os.path.join(DATASET_PATH, "clean", "*"))
+    muted_files = glob.glob(os.path.join(DATASET_PATH, "muted", "*"))
+    all_files = buzzy_files + clean_files + muted_files
+    delete_augmented_files(all_files)

@@ -11,7 +11,8 @@ class _Buzz_Finder_Service:
     model = None
     _mappings = [
         "buzzy",
-        "clean"
+        "clean",
+        "muted"
     ]
     _instance = None
 
@@ -26,7 +27,7 @@ class _Buzz_Finder_Service:
         # MFCCs = MFCCs[np.newaxis, ..., np.newaxis]
 
         # make prediction
-        predictions = self.model.predict(MFCCs) # [ [0.2, 0.6] ] - 2d array with predictions for buzzy / clean
+        predictions = self.model.predict(MFCCs) # [ [0.2, 0.6, 0.2] ] - 2d array with predictions for buzzy / clean / muted
         predicted_index = np.argmax(predictions)
         predicted_value = self._mappings[predicted_index]
 
@@ -67,12 +68,13 @@ class _Buzz_Finder_Service:
 
 
 
-def Buzz_Finder_Service():
+def Buzz_Finder_Service(model_path=MODEL_PATH):
 
     # ensure that we only have 1 instance of BFS
     if _Buzz_Finder_Service._instance is None:
         _Buzz_Finder_Service._instance = _Buzz_Finder_Service()
-        _Buzz_Finder_Service.model = keras.models.load_model(MODEL_PATH)
+        _Buzz_Finder_Service.model = keras.models.load_model(model_path)
+        print(model_path)
     return _Buzz_Finder_Service._instance
 
 
@@ -80,7 +82,7 @@ if __name__ == "__main__":
 
     bfs = Buzz_Finder_Service()
 
-    test_audio_path = os.path.join(ROOT_DIR, "audio", "test_audio")
+    test_audio_path = os.path.join(ROOT_DIR, "audio", "buzz_finder_audio", "test_audio")
     tone1 = bfs.predict(os.path.join(test_audio_path, "test_buzzy1.wav"))
     tone2 = bfs.predict(os.path.join(test_audio_path, "test_clean1.wav"))
 

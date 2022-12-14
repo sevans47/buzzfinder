@@ -22,7 +22,7 @@ from tensorflow.keras.regularizers import l2
 from buzzfinder.const import ROOT_DIR
 
 # filepath to data for training model
-data_filename = 'comprehensive_mfccs_no_augment.json'
+data_filename = 'comprehensive_mfccs_all_5to1_20221213-0954.json'
 DATA_PATH = os.path.join(ROOT_DIR, 'data', data_filename)
 
 # filepaths for saving model artifacts
@@ -97,7 +97,7 @@ def build_model(input_shape, learning_rate, error="binary_crossentropy"):
 #     model.compile(optimizer=optimizer, loss=error, metrics=["accuracy"])
 
     # if doing softmax:
-    model.add(Dense(2, activation="softmax"))  #[0.1, 0.7]
+    model.add(Dense(3, activation="softmax"))  #[0.1, 0.7, 0.2]
     optimizer = Adam(learning_rate=learning_rate)
     model.compile(optimizer=optimizer, loss="sparse_categorical_crossentropy", metrics=["accuracy"])
 
@@ -147,7 +147,7 @@ def main(use_mlflow=True, dataset_path=DATA_PATH, saved_model_path=SAVED_MODEL_P
     X_train, X_validation, X_test, y_train, y_validation, y_test = load_dataset(dataset_path)
 
     # build the CNN model
-    input_shape = (X_train.shape[1], X_train.shape[2], X_train.shape[3])  # (# frames, # coefficients (13), # channels (1)
+    input_shape = (X_train.shape[1], X_train.shape[2], X_train.shape[3])  # (# frames, # coefficients (13), # channels (1))
     model = build_model(input_shape, LEARNING_RATE)
 
 

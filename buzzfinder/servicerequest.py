@@ -10,17 +10,22 @@ from api.const import ROOT_DIR
 SERVICE_URL = "http://localhost:3000/classify"
 
 def sample_random_audio_clip():
-    s_type = random.choice(['clean', 'buzzy'])
+    s_type = random.choice(['clean', 'buzzy', 'muted'])
 
     if s_type == 'clean':
         clean_path = os.path.join(ROOT_DIR, 'audio', 'buzz_finder_audio', 'clean')
         clean_file = random.choice(os.listdir(clean_path))
         random_path = os.path.join(clean_path, clean_file)
 
-    else:
+    elif s_type == 'buzzy':
         buzzy_path = os.path.join(ROOT_DIR, 'audio', 'buzz_finder_audio', 'buzzy')
         buzzy_file = random.choice(os.listdir(buzzy_path))
         random_path = os.path.join(buzzy_path, buzzy_file)
+
+    else:
+        muted_path = os.path.join(ROOT_DIR, 'audio', 'buzz_finder_audio', 'muted')
+        muted_file = random.choice(os.listdir(muted_path))
+        random_path = os.path.join(muted_path, muted_file)
 
     return random_path, s_type
 

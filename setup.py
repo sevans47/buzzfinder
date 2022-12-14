@@ -7,6 +7,6 @@ with open('requirements.txt') as f:
 requirements = [x.strip() for x in content]
 
 setup(name='buzzfinder',
-      description='DL audio classification that can identify a note played on guitar as buzzy or clean',
+      description='DL audio classification that can identify a note played on guitar as buzzy, clean, or muted',
       packages=find_packages(),
       install_requires=requirements)
