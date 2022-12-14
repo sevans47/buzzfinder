@@ -1,4 +1,7 @@
 audio/
+temp/
+mlruns/
+buzzfinder/unused/
 *.egg-info
 .coverage
 .ipynb_checkpoints
