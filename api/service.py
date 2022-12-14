@@ -7,7 +7,7 @@ import bentoml
 from bentoml.io import NumpyNdarray
 
 
-BENTO_MODEL_TAG = "buzzfinder_model:eseu7hb7ugbsnueb"
+BENTO_MODEL_TAG = "buzzfinder_model:ab6pufd3kw67pueb"
 
 # use runner to wrap model because it optimizes computation
 classifier_runner = bentoml.keras.get(BENTO_MODEL_TAG).to_runner()

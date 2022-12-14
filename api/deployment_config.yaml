@@ -1,5 +1,5 @@
 api_version: v1
-name: buzzfinder_classifier
+name: buzzfinder_classifier_v2
 operator:
   name: google-cloud-run
 template: terraform
@@ -8,5 +8,5 @@ spec:
   region: us-west1
   port: 3000
   max_instances: 1
-  memory: 512M
+  memory: 1G
   cpu: 1
