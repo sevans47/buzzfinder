@@ -1,6 +1,7 @@
 from buzzfinder.make_audio_clips import get_audio_clips
 from buzzfinder.const import ROOT_DIR, SAMPLES_TO_CONSIDER
-from buzzfinder.prepare_dataset import delete_augmented_files, main
+from buzzfinder.prepare_dataset import delete_augmented_files
+from buzzfinder.prepare_dataset import main as prepare_dataset_main
 from buzzfinder.train_model import main as train_model_main
 from buzzfinder.predict import Buzz_Finder_Service, MODEL_PATH
 import os
@@ -14,7 +15,7 @@ def test_can_make_audio_clips():
     # test that get_audio_clips() in make_audio_clips.py can extract audio clips from longer audio file
     dataset_path = os.path.join(ROOT_DIR, "tests", "test_data", "test_audio_clips", "temp_audio_clips")
     get_audio_clips("test_raw_audio.wav", raw_audio_path=os.path.join(ROOT_DIR, "tests", "test_data"), dataset_path=dataset_path)
-    temp_file = os.path.join(dataset_path, "test_data1.wav")
+    temp_file = os.path.join(dataset_path, "test_raw_audio1.wav")
     assert os.path.isfile(temp_file)
 
     # delete test files in temp_audio_clips
@@ -27,24 +28,25 @@ def test_can_prepare_dataset():
 
     # get test paths to dataset and json
     test_dataset_path = os.path.join(ROOT_DIR, "tests", "test_data", "test_audio_clips")
-    test_json_path = os.path.join(ROOT_DIR, "data", "test_dataset.json")
+    test_json_path = os.path.join(ROOT_DIR, "tests", "test_data", "test_dataset_temp.json")
 
     # test that main() in prepare_dataset.py can augment the data and save a json
-    main(dataset_path=test_dataset_path, json_path=test_json_path, create_augmented_data=True, n_augmentations_per_file=1)
+    prepare_dataset_main(dataset_path=test_dataset_path, json_path=test_json_path, create_augmented_data=True, n_augmentations_per_file=1)
     assert os.path.isfile(test_json_path)
     os.remove(test_json_path)
 
     # test main() using preexisting augmented data
-    main(dataset_path=test_dataset_path, json_path=test_json_path, create_augmented_data=False)
+    prepare_dataset_main(dataset_path=test_dataset_path, json_path=test_json_path, create_augmented_data=False)
     assert os.path.isfile(test_json_path)
     os.remove(test_json_path)
 
     # test main() with no augmented data
     buzzy_files = glob.glob(os.path.join(test_dataset_path, "buzzy", "*"))
     clean_files = glob.glob(os.path.join(test_dataset_path, "clean", "*"))
-    all_files = buzzy_files + clean_files
+    muted_files = glob.glob(os.path.join(test_dataset_path, "muted", "*"))
+    all_files = buzzy_files + clean_files + muted_files
     delete_augmented_files(all_files)
-    main(dataset_path=test_dataset_path, json_path=test_json_path, create_augmented_data=False)
+    prepare_dataset_main(dataset_path=test_dataset_path, json_path=test_json_path, create_augmented_data=False)
     assert os.path.isfile(test_json_path)
     os.remove(test_json_path)
 
@@ -72,7 +74,7 @@ def test_bf_predict():
     bfs = Buzz_Finder_Service()
     test_audio_path = os.path.join(ROOT_DIR, "tests", "test_data", "test_audio_clips", "buzzy", "buzzy10.wav")
     predicted_tone = bfs.predict(test_audio_path)
-    assert predicted_tone in ['buzzy', 'clean']
+    assert predicted_tone in ['buzzy', 'clean', 'muted']
 
 if __name__ == "__main__":
     # test_can_make_audio_clips()
