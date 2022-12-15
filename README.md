@@ -27,7 +27,19 @@ The API's classify function takes a numpy array of a 2 second audio clip's mfccs
 # Documentation
 
 ### Installation
-`pip install buzzfinder`
+Create a python3 virtualenv and activate it:
+```
+sudo apt-get install virtualenv python-pip python-dev
+deactivate; virtualenv -ppython3 ~/venv ; source ~/venv/bin/activate
+```
+
+Clone the project and install it:
+```
+git clone git@github.com:sevans47/buzzfinder.git
+cd buzzfinder
+pip install -r requirements.txt
+make clean install test
+```
 
 ### Getting 2 second audio clips from longer audio
 python:
@@ -53,8 +65,8 @@ main(use_mlflow=False)
 ### How to save model and results locally using MLflow
 cli:
 ```
-touch mlruns
-mlflow_create_experiment
+mkdir mlruns
+make mlflow_create_experiment
 make mlflow_launch_tracking_server
 ```
 

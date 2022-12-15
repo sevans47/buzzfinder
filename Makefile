@@ -34,6 +34,12 @@ upload_audio_data:
 download_audio_data:
 	@gsutil -m cp -rn gs://${BUCKET_NAME}/audio .
 
+upload ml_runs:
+	@gsutil -m cp -rn mlruns gs://${BUCKET_NAME}
+
+download_ml_runs:
+	@gsutil -m cp -rn gs://${BUCKET_NAME}/mlruns .
+
 
 #----------mlflow stuff----------
 

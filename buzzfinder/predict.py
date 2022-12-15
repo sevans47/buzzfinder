@@ -4,7 +4,7 @@ import librosa
 import os
 from buzzfinder.const import ROOT_DIR, SAMPLES_TO_CONSIDER, N_MFCC, HOP_LENGTH, N_FFT
 
-MODEL_PATH = os.path.join(ROOT_DIR, "data", "model.h5")
+MODEL_PATH = os.path.join(ROOT_DIR, "data", "model_5to1_aug.h5")
 
 class _Buzz_Finder_Service:
 
