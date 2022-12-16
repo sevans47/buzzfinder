@@ -1,6 +1,7 @@
 audio/
 temp/
 mlruns/
+images/
 buzzfinder/unused/
 *.egg-info
 .coverage
@@ -8,3 +9,4 @@ buzzfinder/unused/
 .DS_Store
 **/__pycache__/
 .env
+buzz_finder.ipynb
