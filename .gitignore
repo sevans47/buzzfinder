@@ -1,7 +1,6 @@
 audio/
 temp/
 mlruns/
-images/
 buzzfinder/unused/
 *.egg-info
 .coverage
