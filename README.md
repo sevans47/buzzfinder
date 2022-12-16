@@ -6,7 +6,7 @@ played on the guitar has a clean, buzzy, or muted tone.  It takes a two second a
 - Feel free to visit the the [demo website's github](https://github.com/sevans47/buzzfinder_web) repo as well. 💻
 - Check out the API itself [here](https://buzzfinder-classifier-v2-mnvqg6klaa-uc.a.run.app/). 🗄️
 
-![screenshot](buzzfinder_demo_site.jpg)
+![screenshot](images/buzzfinder_demo_site.jpg)
 
 ### purpose of buzzfinder
 
