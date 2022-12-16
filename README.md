@@ -2,10 +2,9 @@
 buzzfinder is an API that uses a deep learning CNN model to identify whether a note
 played on the guitar has a clean, buzzy, or muted tone.  It takes a two second audio clip of a single guitar note as input, and outputs the predicted tone.
 
-Visit the [demo website](https://sevans47-buzzfinder-web--buzzfinder-03cgkc.streamlit.app/) to get a better understanding of the project. 🚀
-(Feel free to visit the the [demo website's github](https://github.com/sevans47/buzzfinder_web) repo as well. 💻)
-
-Check out the API itself [here](https://buzzfinder-classifier-v2-mnvqg6klaa-uc.a.run.app/). 🗄️
+- Visit the [demo website](https://sevans47-buzzfinder-web--buzzfinder-03cgkc.streamlit.app/) to get a better understanding of the project. 🚀
+- Feel free to visit the the [demo website's github](https://github.com/sevans47/buzzfinder_web) repo as well. 💻
+- Check out the API itself [here](https://buzzfinder-classifier-v2-mnvqg6klaa-uc.a.run.app/). 🗄️
 
 ![screenshot](buzzfinder_demo_site.jpg)
 
